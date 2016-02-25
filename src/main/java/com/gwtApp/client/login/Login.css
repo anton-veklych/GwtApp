@@ -1,0 +1,12 @@
+.box {
+    font-size: 14px;
+    font-style: normal;
+}
+.blackText {
+    color:black;
+}
+
+.loginButton{
+    display: block;
+    font-size: 14pt;
+}

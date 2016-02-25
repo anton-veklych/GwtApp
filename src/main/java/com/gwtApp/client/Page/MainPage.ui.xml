@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:gwt='urn:import:com.google.gwt.user.client.ui'
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:with type="com.gwtApp.client.Page.MainPageResources" field="res"/>
+
+    <gwt:HTMLPanel>
+        <div align="center">
+                <g:Label ui:field="message" styleName="{res.style.label}"   />
+                <g:Button ui:field="exit" text="Выйти" styleName="{res.style.button}" />
+        </div>
+
+    </gwt:HTMLPanel>
+
+
+
+
+
+</ui:UiBinder>

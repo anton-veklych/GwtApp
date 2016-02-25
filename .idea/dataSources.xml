@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="3011442633">
+    <data-source source="LOCAL" name="HSQLDB - Users" uuid="c581edaa-79ac-4fb6-9237-7c1facc50d4a">
+      <driver-ref>hsqldb.embedded</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.hsqldb.jdbcDriver</jdbc-driver>
+      <jdbc-url>jdbc:hsqldb:file:/db/Users</jdbc-url>
+      <driver-properties>
+        <property name="default_schema" value="true" />
+      </driver-properties>
+      <libraries />
+    </data-source>
+  </component>
+</project>

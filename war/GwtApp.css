@@ -1,0 +1,34 @@
+/** Add css rules here for your application. */
+
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+}
+
+body, td, a, div, .p {
+background-color: #F4F4F4;
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: small;
+    margin: 8px;
+}
+#footer{
+    text-align: center;
+}
+#logo{
+    min-width: 314px;
+    min-height: 132px;
+    max-width: 314px;
+    max-height: 100%;
+}
+
+#img{
+    float:left;
+    margin: 7px 7px 7px 0;
+}
+
+#content{
+    width: auto;
+    height: 60%;
+}
