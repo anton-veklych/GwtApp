@@ -1,6 +1,5 @@
 package com.gwtApp.server;
 
-import com.gwtApp.server.TimeIntervals;
 
 import java.util.Date;
 import java.util.Locale;
@@ -8,15 +7,11 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 
-/**
- * Created by adm on 16.02.2016.
- */
-public class Message {
 
+public class Message {
     public ResourceBundle showResource(Locale locale){
         Locale localeDefault = new Locale("en", "US");
         ResourceBundle resourceBundle = null;
-
         try {
             resourceBundle = ResourceBundle.getBundle("resources", locale);
         } catch (MissingResourceException e){
@@ -24,11 +19,9 @@ public class Message {
             resourceBundle = ResourceBundle.getBundle("resources", localeDefault.getDefault());
         }
         return resourceBundle;
-
     }
 
     public String showMessage(TimeIntervals tm, Date currentTime ) {
-
         if (tm.morning().getTime() < currentTime.getTime() && currentTime.getTime() <= tm.day().getTime()) {
             String st = "morning";
             return st;
@@ -43,9 +36,6 @@ public class Message {
             return st;
         }
     }
-
-
-
 }
 
 

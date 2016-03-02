@@ -4,7 +4,7 @@ package com.gwtApp.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.gwtApp.Entity.Users;
+import com.gwtApp.Entity.User;
 
 
 import java.util.Date;
@@ -16,8 +16,8 @@ import java.util.Date;
 public interface GwtAppService extends RemoteService {
 
 
-    Users getSessionAttribute();
-    Boolean userLogining(String login, String pass);
+    User getSessionAttribute();
+    Boolean userLogining(User user);
     Boolean initialDB();
     String getTimeMessage(String locale, Date currentTime);
     void logout();

@@ -2,7 +2,7 @@ package com.gwtApp.server;
 
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.gwtApp.Entity.Users;
+import com.gwtApp.Entity.User;
 import com.gwtApp.client.GwtAppService;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -17,7 +17,7 @@ import java.util.*;
 public class GwtAppServiceImpl extends RemoteServiceServlet implements GwtAppService{
     private SessionFactory sessionFactory;
     private Session session;
-    private List<Users> usersList = new ArrayList();
+    private List<User> usersList = new ArrayList();
     private HttpSession userSession;
 
     public GwtAppServiceImpl() {
@@ -26,16 +26,13 @@ public class GwtAppServiceImpl extends RemoteServiceServlet implements GwtAppSer
     }
 
     public Boolean initialDB() {
-
         Query query =  session.createSQLQuery("INSERT INTO Users (login, password, name, salt) VALUES\n" +
                 "('ivan', '$2a$10$WCayMuaNzX12BUPHj50vCuzjcmM94gshna8OQnB2sR7voIRf/5mj.', 'Иван', 'salt1'),\n" +
                 "('john', '$2a$10$3E/IrnB07CEruNXL52.47u9nXLvKyOSqZLSposk/x5Y7KFlDqEWsS', 'John', 'salt2')\n");
-
-
         int result = query.executeUpdate();
-         query =  session.createQuery("from Users");
+         query =  session.createQuery("from User");
         usersList = query.list();
-        Users user = usersList.get(0);
+        User user = usersList.get(0);
         if(user == null){
             return false;
         } else {
@@ -44,20 +41,19 @@ public class GwtAppServiceImpl extends RemoteServiceServlet implements GwtAppSer
     }
 
 
-    public Boolean userLogining(String login, String pass) {
-        Query query =  session.createQuery("from Users where login = :login ");
-        query.setParameter("login", login);
+    public Boolean userLogining(User user) {
+        Query query =  session.createQuery("from User where login = :login ");
+        query.setParameter("login", user.getLogin());
         usersList = query.list();
-        Users user = usersList.get(0);
-        String pw = pass+user.getSalt();
+        User u = usersList.get(0);
+        String pw = user.getPassword()+u.getSalt();
         //String hashpass = BCrypt.hashpw(pw, BCrypt.gensalt());
-        Boolean b = BCrypt.checkpw(pw, user.getPassword());
+        Boolean b = BCrypt.checkpw(pw, u.getPassword());
         if(b==true){
             HttpServletRequest httpServletRequest = this.getThreadLocalRequest();
             userSession = httpServletRequest.getSession();
-            userSession.setAttribute("user", user);
+            userSession.setAttribute("user", u);
         }
-
         return b;
     }
 
@@ -70,22 +66,16 @@ public class GwtAppServiceImpl extends RemoteServiceServlet implements GwtAppSer
         return st;
     }
 
-    public Users getSessionAttribute(){
-        Users user = (Users)userSession.getAttribute("user");
+    public User getSessionAttribute(){
+        User user = (User)userSession.getAttribute("user");
         return user;
     }
 
     public void logout() {
-
         HttpServletRequest request = this.getThreadLocalRequest();
         HttpSession session = request.getSession(false);
         if (session == null)
             return;
         session.invalidate();
     }
-
-
-
-
-
 }

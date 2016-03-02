@@ -3,9 +3,7 @@ package com.gwtApp.server;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by adm on 16.02.2016.
- */
+
 public class TimeIntervals {
 
     public Date morning() {
@@ -39,7 +37,4 @@ public class TimeIntervals {
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
-
-
-
 }
