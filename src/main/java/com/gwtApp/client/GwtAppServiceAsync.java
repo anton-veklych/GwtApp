@@ -13,7 +13,6 @@ public interface GwtAppServiceAsync {
     void getTimeMessage (String locale, Date currentTime, AsyncCallback<String> async);
     void getSessionAttribute(AsyncCallback<User> async);
     void logout(AsyncCallback<Void> async);
-    void initialDB(AsyncCallback<Boolean> async);
-
+    void initialDB(AsyncCallback<Void> async);
 
 }

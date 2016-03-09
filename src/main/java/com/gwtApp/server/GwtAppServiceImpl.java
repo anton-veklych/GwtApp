@@ -4,9 +4,8 @@ package com.gwtApp.server;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.gwtApp.Entity.User;
 import com.gwtApp.client.GwtAppService;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import com.gwtApp.server.DAO.UserDAO;
+import com.gwtApp.server.DAO.UserDAOImpl;
 import org.mindrot.jbcrypt.BCrypt;
 
 
@@ -15,46 +14,30 @@ import javax.servlet.http.HttpSession;
 import java.util.*;
 
 public class GwtAppServiceImpl extends RemoteServiceServlet implements GwtAppService{
-    private SessionFactory sessionFactory;
-    private Session session;
+    private UserDAO userDAO;
     private List<User> usersList = new ArrayList();
-    private HttpSession userSession;
+    private HttpSession userSession = null;
 
     public GwtAppServiceImpl() {
-        sessionFactory = HibernateUtil.getSessionFactory();
-        session = sessionFactory.openSession();
+        userDAO = new UserDAOImpl();
     }
 
-    public Boolean initialDB() {
-        Query query =  session.createSQLQuery("INSERT INTO Users (login, password, name, salt) VALUES\n" +
-                "('ivan', '$2a$10$WCayMuaNzX12BUPHj50vCuzjcmM94gshna8OQnB2sR7voIRf/5mj.', 'Иван', 'salt1'),\n" +
-                "('john', '$2a$10$3E/IrnB07CEruNXL52.47u9nXLvKyOSqZLSposk/x5Y7KFlDqEWsS', 'John', 'salt2')\n");
-        int result = query.executeUpdate();
-         query =  session.createQuery("from User");
-        usersList = query.list();
-        User user = usersList.get(0);
-        if(user == null){
-            return false;
-        } else {
-            return true;
-        }
-    }
+   public void initialDB(){
+       userDAO.initial();
+   }
 
 
     public Boolean userLogining(User user) {
-        Query query =  session.createQuery("from User where login = :login ");
-        query.setParameter("login", user.getLogin());
-        usersList = query.list();
+        usersList = userDAO.getUsersList(user);
         User u = usersList.get(0);
         String pw = user.getPassword()+u.getSalt();
-        //String hashpass = BCrypt.hashpw(pw, BCrypt.gensalt());
-        Boolean b = BCrypt.checkpw(pw, u.getPassword());
-        if(b==true){
+        //Boolean b = BCrypt.checkpw(pw, u.getPassword());
+        if(BCrypt.checkpw(pw, u.getPassword())){
             HttpServletRequest httpServletRequest = this.getThreadLocalRequest();
             userSession = httpServletRequest.getSession();
             userSession.setAttribute("user", u);
-        }
-        return b;
+            return true;
+        }else return false;
     }
 
     public String getTimeMessage(String locale, Date currentTime){

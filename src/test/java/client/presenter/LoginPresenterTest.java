@@ -3,7 +3,9 @@ package client.presenter;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasText;
 import com.gwtApp.Entity.User;
+import com.gwtApp.client.event.LoginEvent;
 import org.easymock.EasyMock;
 import client.mocks.MockHasClickHandlers;
 import client.mocks.MockHasKeyDownHandlers;
@@ -70,6 +72,12 @@ public class LoginPresenterTest {
        EasyMock.verify(display);
     }
 
+    @Test
+    public void testLoginPresenter() {
+        replayAll();
+        getPresenter();
+        verifyAll();
+    }
 
     @Test
     public void testGo() {
@@ -118,7 +126,7 @@ public class LoginPresenterTest {
         display.setErrorMsg(null);
         EasyMock.expectLastCall().times(2);
         EasyMock.expect(display.getUser()).andReturn(new User());
-        display.setErrorMsg("Please enter a username and password");
+        display.setErrorMsg("Please enter a username and password!");
         EasyMock.expectLastCall().once();
 
         KeyDownEvent evt = EasyMock.createMock(KeyDownEvent.class);
@@ -154,7 +162,29 @@ public class LoginPresenterTest {
         EasyMock.verify(evt);
     }
 
+    @Test
+    public void testCallBackFailure() {
+        Throwable t = new Exception();
+        display.setErrorMsg("Fail user!!!");
+        EasyMock.expectLastCall().once();
 
+        replayAll();
+        getPresenter().callback.onFailure(t);
+        verifyAll();
 
+    }
+
+    @Test
+    public void testCallbackSuccess(){
+        Boolean b = true;
+        HasText text = EasyMock.createMock(HasText.class);
+        eventBus.fireEvent(EasyMock.<LoginEvent>anyObject());
+        EasyMock.expectLastCall().once();
+        EasyMock.expect(display.getPassInputBox()).andReturn(text);
+
+        replayAll();
+        getPresenter().callback.onSuccess(b);
+        verifyAll();
+    }
 
 }

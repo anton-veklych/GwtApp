@@ -34,7 +34,7 @@ public class MessageTest {
 
         Locale.setDefault(localeRU);
         resourceBundle = message.showResource(Locale.getDefault());
-        resource = ResourceBundle.getBundle("resources", localeEN);
+        resource = ResourceBundle.getBundle("resources", localeRU);
         Assert.assertEquals(resource, resourceBundle);
     }
 }

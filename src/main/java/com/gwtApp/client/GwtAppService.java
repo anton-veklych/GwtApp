@@ -18,8 +18,8 @@ public interface GwtAppService extends RemoteService {
 
     User getSessionAttribute();
     Boolean userLogining(User user);
-    Boolean initialDB();
     String getTimeMessage(String locale, Date currentTime);
     void logout();
+    void initialDB();
 
 }

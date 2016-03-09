@@ -3,6 +3,7 @@ package com.gwtApp.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.gwtApp.client.Page.MainPage;
 import com.gwtApp.client.event.LogOutEvent;
@@ -23,10 +24,11 @@ public class GwtAppController implements Presenter {
     private MainPagePresenter mainPagePresenter;
 
     public GwtAppController(HandlerManager eventBus){
+        String locale = LocaleInfo.getCurrentLocale().getLocaleName();
         this.eventBus = eventBus;
         gwtAppService = GWT.create(GwtAppService.class);
         loginPresenter = new LoginPresenter(gwtAppService, eventBus, new LoginViewImpl());
-        mainPagePresenter = new MainPagePresenter(gwtAppService, eventBus, new MainPage());
+        mainPagePresenter = new MainPagePresenter(gwtAppService, eventBus, new MainPage(), locale);
        bind();
     }
 

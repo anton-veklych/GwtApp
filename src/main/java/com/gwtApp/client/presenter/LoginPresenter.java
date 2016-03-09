@@ -46,29 +46,16 @@ public class LoginPresenter implements Presenter{
 
 
     private User user;
-    public boolean isValid() {
+    public boolean isValid(User user) {
         return
                 (user.getLogin() != null) && !(user.getLogin().isEmpty()) &&
                         (user.getPassword() != null) && !(user.getPassword().isEmpty());
     }
-    private void doLogin() {
+    public void doLogin() {
         display.setErrorMsg(null);
         user = display.getUser();
-        if(isValid()) {
-            gwtAppService.userLogining(user, new AsyncCallback<Boolean>(){
-                public void onFailure(Throwable caught) {
-                    display.setErrorMsg("Fail user!!!");
-                }
-                public void onSuccess(Boolean b) {
-                    if (b==true) {
-                        eventBus.fireEvent(new LoginEvent());
-                        display.getPassInputBox().setText("");
-                    } else {
-                        display.setErrorMsg("Password failed!!!");
-                    }
-
-                }
-            });
+        if(isValid(user)) {
+            gwtAppService.userLogining(user, callback);
         } else {
             display.setErrorMsg("Please enter a username and password!");
         }
@@ -94,6 +81,21 @@ public class LoginPresenter implements Presenter{
             if(KeyCodes.KEY_ENTER == evt.getNativeKeyCode()) {
                 doLogin();
             }
+        }
+    };
+
+    public AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>(){
+        public void onFailure(Throwable caught) {
+            display.setErrorMsg("Fail user!!!");
+        }
+        public void onSuccess(Boolean b) {
+            if (b==true) {
+                display.getPassInputBox().setText("");
+                eventBus.fireEvent(new LoginEvent());
+            } else {
+                display.setErrorMsg("Password failed!!!");
+            }
+
         }
     };
 

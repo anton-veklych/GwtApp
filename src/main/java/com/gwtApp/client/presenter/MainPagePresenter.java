@@ -15,6 +15,7 @@ import com.gwtApp.client.event.LogOutEvent;
 import java.util.Date;
 
 
+
 public class MainPagePresenter implements Presenter{
 
     public  interface Display{
@@ -26,16 +27,21 @@ public class MainPagePresenter implements Presenter{
     private GwtAppServiceAsync gwtAppService;
     private HandlerManager eventBus;
     private Display display;
+    private User user;
+    private Date date = new Date();
+    private String locale;
 
-    public MainPagePresenter(GwtAppServiceAsync gwtAppService, HandlerManager eventBus, MainPagePresenter.Display display){
+    public MainPagePresenter(GwtAppServiceAsync gwtAppService, HandlerManager eventBus, MainPagePresenter.Display display, String locale){
         this.gwtAppService = gwtAppService;
         this.eventBus = eventBus;
         this.display = display;
+        this.locale = locale;
+
     }
 
-    private void bind(){
+    private void bind() {
         display.exit().addClickHandler(logoutClickHandler);
-        setMsg();
+        setMsg(locale);
     }
 
     public void go( HasWidgets container) {
@@ -44,39 +50,50 @@ public class MainPagePresenter implements Presenter{
         bind();
     }
 
-    User user;
-    public void setMsg(){
-        Date date = new Date();
-        LocaleInfo locale = LocaleInfo.getCurrentLocale();
-        String clientLocale = locale.getLocaleName();
 
-        gwtAppService.getSessionAttribute(new AsyncCallback<User>() {
-            public void onFailure(Throwable caught) {
-            }
-            public void onSuccess(User users) {
-                user = users;
-            }
-        });
-
-        gwtAppService.getTimeMessage(clientLocale, date, new AsyncCallback<String>() {
-            public void onFailure(Throwable caught) {
-            }
-            public void onSuccess(String st) {
-                display.setUserMessage(st + " " + user.getName() + "!");
-            }
-        });
+    public void setMsg(String locale){
+        gwtAppService.getSessionAttribute(userCallback);
+        gwtAppService.getTimeMessage(locale, date, messageCallback);
     }
+
+
+    public AsyncCallback<User> userCallback = new AsyncCallback<User>() {
+        public void onFailure(Throwable caught) {
+        }
+        public void onSuccess(User users) {
+            user = users;
+        }
+    };
+
+    public AsyncCallback<String> messageCallback = new AsyncCallback<String>() {
+        public void onFailure(Throwable caught) {
+        }
+        public void onSuccess(String st) {
+            display.setUserMessage(st + " " + user.getName() + "!");
+        }
+    };
 
     ClickHandler logoutClickHandler = new ClickHandler() {
         public void onClick(ClickEvent evt) {
-            gwtAppService.logout(new AsyncCallback<Void>() {
-                public void onFailure(Throwable t) {
-                }
-                public void onSuccess(Void v) {
-                    eventBus.fireEvent(new LogOutEvent());
-                }
-            });
+            gwtAppService.logout(logoutCallback);
         }
     };
+
+    public AsyncCallback<Void> logoutCallback = new AsyncCallback<Void>() {
+        public void onFailure(Throwable t) {
+        }
+        public void onSuccess(Void v) {
+            eventBus.fireEvent(new LogOutEvent());
+
+        }
+    };
+
+    public void setDate(Date time){
+        this.date = time;
+    }
+
+    public void setUser(User user){
+        this.user = user;
+    }
 
 }

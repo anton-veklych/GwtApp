@@ -2,19 +2,19 @@ package client.presenter;
 
 
 import client.mocks.MockHasClickHandlers;
-import client.mocks.MockHasKeyDownHandlers;
 import client.mocks.MockHasWidgets;
-import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gwtApp.Entity.User;
 import com.gwtApp.client.GwtAppServiceAsync;
+import com.gwtApp.client.event.LogOutEvent;
+import com.gwtApp.client.event.LoginEvent;
 import com.gwtApp.client.presenter.MainPagePresenter;
 import org.easymock.EasyMock;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 public class MainPagePresenterTest {
     private MainPagePresenter.Display display;
@@ -22,22 +22,27 @@ public class MainPagePresenterTest {
     private MockHasWidgets container;
     private MockHasClickHandlers logoutClickHandler;
     private GwtAppServiceAsync service;
+    private String locale;
+    private Date time;
+    private Void v;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUps() throws Exception {
 
         display = EasyMock.createMock(MainPagePresenter.Display.class);
         eventBus = EasyMock.createMock(HandlerManager.class);
         service = EasyMock.createMock(GwtAppServiceAsync.class);
+        locale = "ru_RU";
+        time = EasyMock.createMock(Date.class);
+
 
         container = new MockHasWidgets();
         logoutClickHandler = new MockHasClickHandlers();
-
-        EasyMock.expect(display.exit()).andReturn(logoutClickHandler);
     }
 
     private MainPagePresenter getPresenter() {
-        return new MainPagePresenter(service, eventBus, display);
+        MainPagePresenter mainPagePresenter = new MainPagePresenter(service, eventBus, display, locale);
+        return  mainPagePresenter;
     }
 
     private void replayAll() {
@@ -53,16 +58,55 @@ public class MainPagePresenterTest {
     }
 
     @Test
-    public void testMainPresenter() {
-        EasyMock.expect(display.asWidget()).andReturn(null);
+    public void testMainPagePresenter() {
         replayAll();
-        getPresenter().go(container);
+        getPresenter();
         verifyAll();
     }
 
     @Test
     public void testGo() {
-        Assert.fail("Not yet implemented");
+        EasyMock.expect(display.asWidget()).andReturn(null);
+        MainPagePresenter mainPage =  getPresenter();
+        mainPage.setDate(time);
+        service.getSessionAttribute(EasyMock.<AsyncCallback<User>>anyObject());
+        service.getTimeMessage(EasyMock.eq(locale), EasyMock.eq(time), EasyMock.<AsyncCallback<String>>anyObject());
+        EasyMock.expect(display.exit()).andReturn(logoutClickHandler);
+        replayAll();
+        mainPage.go(container);
+        verifyAll();
+    }
+
+    @Test
+    public void testMessageCallback(){
+        MainPagePresenter mainPage =  getPresenter();
+        User user = new User();
+        user.setName("ivan");
+        String st = "message";
+        mainPage.setUser(user);
+        display.setUserMessage("message ivan!");
+        replayAll();
+        mainPage.messageCallback.onSuccess(st);
+        verifyAll();
+    }
+
+    @Test
+    public void testUserCallback(){
+        MainPagePresenter mainPage =  getPresenter();
+        User user = new User();
+        user.setName("ivan");
+        replayAll();
+        mainPage.userCallback.onSuccess(user);
+        verifyAll();
+    }
+
+    @Test
+    public void testLogoutCallback(){
+        eventBus.fireEvent(EasyMock.<LogOutEvent>anyObject());
+        EasyMock.expectLastCall().once();
+        replayAll();
+        getPresenter().logoutCallback.onSuccess(v);
+        verifyAll();
     }
 
 }

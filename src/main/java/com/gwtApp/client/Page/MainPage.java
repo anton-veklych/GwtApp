@@ -2,6 +2,7 @@ package com.gwtApp.client.Page;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
@@ -24,6 +25,8 @@ public class MainPage extends Composite implements MainPageView, MainPagePresent
 
     @UiField
     Button exit;
+
+    LocaleInfo locale;
 
     public MainPage() {
         super();
